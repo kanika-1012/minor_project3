@@ -65,7 +65,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (signUpError) throw signUpError;
 
-      // Create user profile
+      // Create user profile in your "profiles" table
       const { error: profileError } = await supabase.from('profiles').insert([
         {
           user_id: (await supabase.auth.getUser()).data.user?.id,
@@ -100,10 +100,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!email.endsWith('@kiit.ac.in')) {
         throw new Error('Only KIIT email addresses are allowed');
       }
-
-      // In a real implementation, you would generate and send an OTP via email
-      // For demo purposes, we'll use a mock OTP system
-      localStorage.setItem('mockOTP', '123456');
+      // Send OTP using Supabase's signInWithOtp method
+      const { error } = await supabase.auth.signInWithOtp({ email });
+      if (error) throw error;
       toast.success('OTP sent to your email!');
       return true;
     } catch (error: any) {
@@ -113,15 +112,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const verifyOTP = async (email: string, otp: string) => {
-    // For demo purposes, we'll verify against the mock OTP
-    const mockOTP = localStorage.getItem('mockOTP');
-    if (otp === mockOTP) {
-      localStorage.removeItem('mockOTP');
+    try {
+      // Verify OTP using Supabase's verifyOtp method
+      const { error } = await supabase.auth.verifyOtp({
+        email,
+        token: otp,
+        type: 'email',
+      });
+      if (error) throw error;
       toast.success('OTP verified successfully!');
       return true;
+    } catch (error: any) {
+      toast.error(error.message);
+      return false;
     }
-    toast.error('Invalid OTP');
-    return false;
   };
 
   return (

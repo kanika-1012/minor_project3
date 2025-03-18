@@ -8,7 +8,7 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, sendOTP, verifyOTP } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,20 +25,11 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   if (!isOpen) return null;
 
   const handleSendOTP = async () => {
-    if (!email.endsWith('@kiit.ac.in')) {
-      toast.error('Please use your KIIT email address');
-      return;
-    }
-    
     try {
-      const { data, error } = await supabase.auth.signInWithOtp({
-        email,
-      });
-      
-      if (error) throw error;
-      
-      setOtpSent(true);
-      toast.success('OTP sent to your email!');
+      const result = await sendOTP(email);
+      if (result) {
+        setOtpSent(true);
+      }
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -46,16 +37,10 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
   const handleVerifyOTP = async () => {
     try {
-      const { data, error } = await supabase.auth.verifyOtp({
-        email,
-        token: otp,
-        type: 'email'
-      });
-      
-      if (error) throw error;
-      
-      setOtpVerified(true);
-      toast.success('Email verified successfully!');
+      const result = await verifyOTP(email, otp);
+      if (result) {
+        setOtpVerified(true);
+      }
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -77,7 +62,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-8 max-w-md w-full">
+      <div className="bg-white rounded-lg p-8 max-w-md w-full relative">
         <h2 className="text-2xl font-bold mb-4">
           {isSignUp ? 'Create Account' : 'Sign In'}
         </h2>
