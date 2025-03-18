@@ -92,7 +92,7 @@ function HomePage() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentWord((prev) => (prev + 1) % words.length);
-    }, 2000);
+    }, 2500);
     return () => clearInterval(interval);
   }, []);
 
@@ -141,7 +141,7 @@ function HomePage() {
                 <h2 className="text-6xl font-bold text-shadow-glow text-white">
                   We{' '}
                   <span className="inline-block min-w-[300px]">
-                    <span key={currentWord} className="animate-fade-in-out inline-block text-[#17d059]">
+                    <span key={currentWord} className="animate-glow inline-block text-[#17d059]">
                       {words[currentWord]}
                     </span>
                   </span>
@@ -151,6 +151,7 @@ function HomePage() {
           </div>
         </div>
       </div>
+      
 
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -223,6 +224,7 @@ function HomePage() {
         </div>
       </footer>
     </>
+    
   );
 }
 

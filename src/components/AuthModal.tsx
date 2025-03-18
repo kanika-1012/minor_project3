@@ -63,39 +63,36 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-8 max-w-md w-full relative">
-        <h2 className="text-2xl font-bold mb-4">
+        <h2 className="text-2xl font-bold mb-4 text-black">
           {isSignUp ? 'Create Account' : 'Sign In'}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Email Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-black">
               Email (@kiit.ac.in)
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-black bg-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               required
             />
           </div>
 
-          {/* Password Input */}
           <div>
-            <label className="block text-sm font-medium text-gray-700">
+            <label className="block text-sm font-medium text-black">
               Password
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-black bg-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               required
             />
           </div>
 
-          {/* OTP Section */}
           {!otpSent && (
             <button
               type="button"
@@ -108,14 +105,14 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
           {otpSent && !otpVerified && (
             <div>
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-black">
                 Enter OTP
               </label>
               <input
                 type="text"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-black bg-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 required
               />
               <button
@@ -128,11 +125,10 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
             </div>
           )}
 
-          {/* Additional sign-up fields after OTP verification */}
           {otpVerified && isSignUp && (
             <>
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-black">
                   Full Name
                 </label>
                 <input
@@ -141,12 +137,12 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   onChange={(e) =>
                     setUserData({ ...userData, fullName: e.target.value })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-black bg-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-black">
                   Year of Study
                 </label>
                 <select
@@ -154,7 +150,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   onChange={(e) =>
                     setUserData({ ...userData, yearOfStudy: e.target.value })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-black bg-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   required
                 >
                   <option value="">Select Year</option>
@@ -165,7 +161,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-black">
                   Stream
                 </label>
                 <input
@@ -174,12 +170,12 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   onChange={(e) =>
                     setUserData({ ...userData, stream: e.target.value })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-black bg-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-black">
                   Branch
                 </label>
                 <input
@@ -188,7 +184,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
                   onChange={(e) =>
                     setUserData({ ...userData, branch: e.target.value })
                   }
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-black bg-white shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                   required
                 />
               </div>
