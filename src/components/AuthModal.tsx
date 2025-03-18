@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import toast from 'react-hot-toast';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -7,12 +8,12 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ isOpen, onClose }: AuthModalProps) {
-  const { signIn, signUp, sendOTP, verifyOTP } = useAuth();
+  const { signIn, signUp } = useAuth();
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState('');
+  const [otpSent, setOtpSent] = useState(false);
   const [otpVerified, setOtpVerified] = useState(false);
   const [userData, setUserData] = useState({
     fullName: '',
@@ -24,13 +25,40 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
   if (!isOpen) return null;
 
   const handleSendOTP = async () => {
-    const success = await sendOTP(email);
-    if (success) setOtpSent(true);
+    if (!email.endsWith('@kiit.ac.in')) {
+      toast.error('Please use your KIIT email address');
+      return;
+    }
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithOtp({
+        email,
+      });
+      
+      if (error) throw error;
+      
+      setOtpSent(true);
+      toast.success('OTP sent to your email!');
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   };
 
   const handleVerifyOTP = async () => {
-    const success = await verifyOTP(email, otp);
-    if (success) setOtpVerified(true);
+    try {
+      const { data, error } = await supabase.auth.verifyOtp({
+        email,
+        token: otp,
+        type: 'email'
+      });
+      
+      if (error) throw error;
+      
+      setOtpVerified(true);
+      toast.success('Email verified successfully!');
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -42,8 +70,8 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         await signIn(email, password);
       }
       onClose();
-    } catch (error) {
-      console.error('Authentication error:', error);
+    } catch (error: any) {
+      toast.error(error.message);
     }
   };
 
@@ -67,7 +95,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
             />
           </div>
 
-          {isSignUp && !otpSent && (
+          {!otpSent && (
             <button
               type="button"
               onClick={handleSendOTP}
@@ -99,94 +127,79 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
             </div>
           )}
 
-          {(!isSignUp || otpVerified) && (
+          {otpVerified && isSignUp && (
             <>
               <div>
                 <label className="block text-sm font-medium text-gray-700">
-                  Password
+                  Full Name
                 </label>
                 <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  type="text"
+                  value={userData.fullName}
+                  onChange={(e) =>
+                    setUserData({ ...userData, fullName: e.target.value })
+                  }
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                   required
                 />
               </div>
-
-              {isSignUp && (
-                <>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Full Name
-                    </label>
-                    <input
-                      type="text"
-                      value={userData.fullName}
-                      onChange={(e) =>
-                        setUserData({ ...userData, fullName: e.target.value })
-                      }
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Year of Study
-                    </label>
-                    <select
-                      value={userData.yearOfStudy}
-                      onChange={(e) =>
-                        setUserData({ ...userData, yearOfStudy: e.target.value })
-                      }
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                      required
-                    >
-                      <option value="">Select Year</option>
-                      <option value="1">1st Year</option>
-                      <option value="2">2nd Year</option>
-                      <option value="3">3rd Year</option>
-                      <option value="4">4th Year</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Stream
-                    </label>
-                    <input
-                      type="text"
-                      value={userData.stream}
-                      onChange={(e) =>
-                        setUserData({ ...userData, stream: e.target.value })
-                      }
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Branch
-                    </label>
-                    <input
-                      type="text"
-                      value={userData.branch}
-                      onChange={(e) =>
-                        setUserData({ ...userData, branch: e.target.value })
-                      }
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
-                      required
-                    />
-                  </div>
-                </>
-              )}
-
-              <button
-                type="submit"
-                className="w-full bg-[#17d059] text-white py-2 rounded hover:bg-[#13b04f]"
-              >
-                {isSignUp ? 'Create Account' : 'Sign In'}
-              </button>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Year of Study
+                </label>
+                <select
+                  value={userData.yearOfStudy}
+                  onChange={(e) =>
+                    setUserData({ ...userData, yearOfStudy: e.target.value })
+                  }
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  required
+                >
+                  <option value="">Select Year</option>
+                  <option value="1">1st Year</option>
+                  <option value="2">2nd Year</option>
+                  <option value="3">3rd Year</option>
+                  <option value="4">4th Year</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Stream
+                </label>
+                <input
+                  type="text"
+                  value={userData.stream}
+                  onChange={(e) =>
+                    setUserData({ ...userData, stream: e.target.value })
+                  }
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Branch
+                </label>
+                <input
+                  type="text"
+                  value={userData.branch}
+                  onChange={(e) =>
+                    setUserData({ ...userData, branch: e.target.value })
+                  }
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+                  required
+                />
+              </div>
             </>
+          )}
+
+          {otpVerified && (
+            <button
+              type="submit"
+              className="w-full bg-[#17d059] text-white py-2 rounded hover:bg-[#13b04f]"
+            >
+              {isSignUp ? 'Create Account' : 'Sign In'}
+            </button>
           )}
         </form>
 
