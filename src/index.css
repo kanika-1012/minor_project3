@@ -6,3 +6,14 @@
   background-color: #fff !important; /* Optionally ensure a contrasting background */
 }
 
+ @keyframes glow {
+          0%, 100% {
+            text-shadow: 0 0 5px rgb(96, 93, 93), 0 0 10px rgb(96, 93, 93), 0 0 15px rgb(96, 93, 93);
+          }
+          50% {
+            text-shadow: 0 0 10px rgb(96, 93, 93), 0 0 20px rgb(96, 93, 93), 0 0 30px rgb(96, 93, 93);
+          }
+        }
+        .animate-glow {
+          animation: glow 1s ease-in-out infinite;
+        }
