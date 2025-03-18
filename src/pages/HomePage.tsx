@@ -98,7 +98,7 @@ function HomePage() {
 
   return (
     <>
-      <nav className="sticky top-0 bg-[#1a1a1a] shadow-xl z-50 border-b border-[#17d059]/10">
+     {/* /* <nav className="sticky top-0 bg-[#1a1a1a] shadow-xl z-50 border-b border-[#17d059]/10">
         <div className="container mx-auto px-4 py-3">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
@@ -123,6 +123,7 @@ function HomePage() {
           </div>
         </div>
       </nav>
+      */ }
 
       <div className="relative h-[600px]">
         <img

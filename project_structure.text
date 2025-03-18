@@ -1,0 +1,41 @@
+- .bolt
+  - config.json
+  - prompt
+- .env
+- .gitignore
+- eslint.config.js
+- index.html
+- package-lock.json
+- package.json
+- postcss.config.js
+- src
+  - App.tsx
+  - components
+    - AppoitmentForm.tsx
+    - AuthModal.tsx
+    - Chatbot.tsx
+    - Navigation.tsx
+    - UtilitiesGrid.tsx
+  - contexts
+    - AuthContext.tsx
+  - index.css
+  - lib
+    - supabase.ts
+  - main.tsx
+  - pages
+    - GrievanceRedressal.tsx
+    - HomePage.tsx
+    - MentalHealth.tsx
+    - StudentClubs.tsx
+    - TrainingPlacements.tsx
+    - UserProfile.tsx
+  - vite-env.d.ts
+- supabase
+  - migrations
+    - 20250317164740_rapid_lodge.sql
+    - 20250317165634_little_hall.sql
+- tailwind.config.js
+- tsconfig.app.json
+- tsconfig.json
+- tsconfig.node.json
+- vite.config.ts

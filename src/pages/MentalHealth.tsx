@@ -1,105 +1,48 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Phone, Calendar, MessageCircle, ExternalLink } from 'lucide-react';
-import ReactCalendar from 'react-calendar';
-import Chatbot from 'react-chatbot-kit';
-import { createClient } from '@supabase/supabase-js';
-import { format, isWeekend, isWithinInterval, setHours, setMinutes } from 'date-fns';
+import { AppointmentForm } from '../components/AppointmentForm'; // Ensure this path is correct
+import { CustomChatbot } from '../components/CustomChatbot';
 import 'react-calendar/dist/Calendar.css';
 
-// Initialize Supabase client
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
-
+// Resources / articles list
 const resources = [
   {
     title: 'Stress Management Techniques',
-    url: 'https://www.healthline.com/health/stress-management-techniques',
-    description: 'Evidence-based strategies for managing stress'
+    url: 'https://www.verywellmind.com/tips-to-reduce-stress-3145195',
+    description: 'Evidence-based strategies for managing stress',
   },
   {
     title: 'Anxiety Coping Strategies',
     url: 'https://www.verywellmind.com/manage-your-anxiety-2584184',
-    description: 'Practical ways to cope with anxiety'
+    description: 'Practical ways to cope with anxiety',
   },
   {
     title: 'Depression Awareness',
     url: 'https://www.nimh.nih.gov/health/topics/depression',
-    description: 'Understanding and managing depression'
+    description: 'Understanding and managing depression',
   },
   {
     title: 'Mindfulness Practices',
     url: 'https://www.mindful.org/meditation/mindfulness-getting-started/',
-    description: 'Introduction to mindfulness meditation'
-  }
+    description: 'Introduction to mindfulness meditation',
+  },
 ];
 
-// Chatbot configuration
-const config = {
-  initialMessages: [
-    {
-      id: 'welcome',
-      message: "Hello! I'm here to help. How are you feeling today?",
-      trigger: 'response'
-    }
-  ],
-  widgets: []
-};
-
 function MentalHealth() {
-  const [showCalendar, setShowCalendar] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [selectedTime, setSelectedTime] = useState<string>('');
+  // State to control modals
+  const [showAppointment, setShowAppointment] = useState(false);
   const [showChat, setShowChat] = useState(false);
-
-  const availableTimes = [
-    '09:00', '10:00', '11:00', '12:00', '13:00',
-    '14:00', '15:00', '16:00', '17:00'
-  ];
-
-  const handleDateSelect = (date: Date) => {
-    setSelectedDate(date);
-  };
-
-  const handleTimeSelect = async (time: string) => {
-    if (!selectedDate) return;
-
-    try {
-      const { data, error } = await supabase
-        .from('appointments')
-        .insert([
-          {
-            appointment_date: format(selectedDate, 'yyyy-MM-dd'),
-            appointment_time: time,
-          }
-        ]);
-
-      if (error) throw error;
-
-      alert('Appointment booked successfully!');
-      setShowCalendar(false);
-      setSelectedDate(null);
-      setSelectedTime('');
-    } catch (error) {
-      console.error('Error booking appointment:', error);
-      alert('Failed to book appointment. Please try again.');
-    }
-  };
-
-  const tileDisabled = ({ date }: { date: Date }) => {
-    return isWeekend(date) || !isWithinInterval(date, {
-      start: new Date(),
-      end: new Date(new Date().setMonth(new Date().getMonth() + 1))
-    });
-  };
 
   return (
     <div className="min-h-screen bg-[#121212] text-white">
+      {/* Top Navigation */}
       <nav className="bg-[#1a1a1a] p-4">
         <div className="container mx-auto">
-          <Link to="/" className="flex items-center space-x-2 text-[#17d059] hover:text-[#13b04f]">
+          <Link
+            to="/"
+            className="flex items-center space-x-2 text-[#17d059] hover:text-[#13b04f]"
+          >
             <ArrowLeft size={20} />
             <span>Back to Home</span>
           </Link>
@@ -107,13 +50,19 @@ function MentalHealth() {
       </nav>
 
       <main className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-8 text-[#17d059]">Mental Health Support</h1>
+        <h1 className="text-4xl font-bold mb-8 text-[#17d059]">
+          Mental Health Support
+        </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Left Column: "Get Help Now" */}
           <div className="bg-[#1a1a1a] p-6 rounded-lg">
-            <h2 className="text-2xl font-bold mb-6 text-[#17d059]">Get Help Now</h2>
-            
+            <h2 className="text-2xl font-bold mb-6 text-[#17d059]">
+              Get Help Now
+            </h2>
+
             <div className="space-y-6">
+              {/* 24/7 Helpline */}
               <div className="flex items-center space-x-4">
                 <Phone className="text-[#17d059]" size={24} />
                 <div>
@@ -122,12 +71,13 @@ function MentalHealth() {
                 </div>
               </div>
 
+              {/* Book an Appointment */}
               <div className="flex items-center space-x-4">
                 <Calendar className="text-[#17d059]" size={24} />
                 <div>
                   <h3 className="font-semibold">Book an Appointment</h3>
-                  <button 
-                    onClick={() => setShowCalendar(true)}
+                  <button
+                    onClick={() => setShowAppointment(true)}
                     className="mt-2 bg-[#17d059] text-white py-2 px-4 rounded hover:bg-[#13b04f]"
                   >
                     Schedule Now
@@ -135,11 +85,12 @@ function MentalHealth() {
                 </div>
               </div>
 
+              {/* Chat Support */}
               <div className="flex items-center space-x-4">
                 <MessageCircle className="text-[#17d059]" size={24} />
                 <div>
                   <h3 className="font-semibold">Online Chat Support</h3>
-                  <button 
+                  <button
                     onClick={() => setShowChat(true)}
                     className="mt-2 bg-[#17d059] text-white py-2 px-4 rounded hover:bg-[#13b04f]"
                   >
@@ -149,46 +100,53 @@ function MentalHealth() {
               </div>
             </div>
 
-            {showCalendar && (
+            {/* Appointment Modal */}
+            {showAppointment && (
               <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-                <div className="bg-[#1a1a1a] p-6 rounded-lg max-w-md w-full">
-                  <h3 className="text-xl font-bold mb-4">Book Appointment</h3>
-                  <ReactCalendar
-                    onChange={handleDateSelect}
-                    value={selectedDate}
-                    tileDisabled={tileDisabled}
-                    className="mb-4"
+                <div className="bg-white p-6 rounded-lg max-w-md w-full">
+                  <h3 className="text-xl font-bold mb-4 text-black">
+                    Book Appointment
+                  </h3>
+                  <AppointmentForm
+                    onSuccess={() => {
+                      alert('Appointment booked successfully!');
+                      setShowAppointment(false);
+                    }}
                   />
-                  {selectedDate && (
-                    <div className="mb-4">
-                      <h4 className="font-semibold mb-2">Select Time:</h4>
-                      <div className="grid grid-cols-3 gap-2">
-                        {availableTimes.map(time => (
-                          <button
-                            key={time}
-                            onClick={() => handleTimeSelect(time)}
-                            className="bg-[#17d059] text-white py-2 px-4 rounded hover:bg-[#13b04f]"
-                          >
-                            {time}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                   <button
-                    onClick={() => setShowCalendar(false)}
-                    className="mt-4 text-gray-400 hover:text-white"
+                    onClick={() => setShowAppointment(false)}
+                    className="mt-4 text-gray-400 hover:text-black"
                   >
                     Close
                   </button>
                 </div>
               </div>
             )}
+
+            {/* Chat Support Modal */}
+            {showChat && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+                <div className="bg-[#1a1a1a] p-6 rounded-lg max-w-md w-full">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-xl font-bold">Chat Support</h3>
+                    <button
+                      onClick={() => setShowChat(false)}
+                      className="text-gray-400 hover:text-white"
+                    >
+                      Close
+                    </button>
+                  </div>
+                  <CustomChatbot />
+                </div>
+              </div>
+            )}
           </div>
 
+          {/* Right Column: Resources Section */}
           <div className="bg-[#1a1a1a] p-6 rounded-lg">
-            <h2 className="text-2xl font-bold mb-6 text-[#17d059]">Resources</h2>
-            
+            <h2 className="text-2xl font-bold mb-6 text-[#17d059]">
+              Resources
+            </h2>
             <div className="space-y-4">
               {resources.map((resource, index) => (
                 <a
@@ -200,8 +158,12 @@ function MentalHealth() {
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-semibold text-[#17d059]">{resource.title}</h3>
-                      <p className="text-sm text-gray-400">{resource.description}</p>
+                      <h3 className="font-semibold text-[#17d059]">
+                        {resource.title}
+                      </h3>
+                      <p className="text-sm text-gray-400">
+                        {resource.description}
+                      </p>
                     </div>
                     <ExternalLink size={20} className="text-gray-400" />
                   </div>
@@ -210,30 +172,11 @@ function MentalHealth() {
             </div>
           </div>
         </div>
-
-        {showChat && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-            <div className="bg-[#1a1a1a] p-6 rounded-lg max-w-md w-full">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold">Chat Support</h3>
-                <button
-                  onClick={() => setShowChat(false)}
-                  className="text-gray-400 hover:text-white"
-                >
-                  Close
-                </button>
-              </div>
-              <Chatbot
-                config={config}
-                messageParser={() => ({})}
-                actionProvider={() => ({})}
-              />
-            </div>
-          </div>
-        )}
       </main>
     </div>
   );
 }
 
 export default MentalHealth;
+
+

@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+.rcw-new-message {
+  color: #000 !important;  /* Set text color to black */
+  background-color: #fff !important; /* Optionally ensure a contrasting background */
+}
+

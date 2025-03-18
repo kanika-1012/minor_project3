@@ -67,6 +67,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
           {isSignUp ? 'Create Account' : 'Sign In'}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Email Input */}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Email (@kiit.ac.in)
@@ -80,6 +81,21 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
             />
           </div>
 
+          {/* Password Input */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
+              required
+            />
+          </div>
+
+          {/* OTP Section */}
           {!otpSent && (
             <button
               type="button"
@@ -112,6 +128,7 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
             </div>
           )}
 
+          {/* Additional sign-up fields after OTP verification */}
           {otpVerified && isSignUp && (
             <>
               <div>
@@ -208,3 +225,4 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
     </div>
   );
 }
+

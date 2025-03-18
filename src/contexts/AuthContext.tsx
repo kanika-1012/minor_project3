@@ -95,14 +95,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Updated sendOTP: generate a random 6-digit OTP and simulate sending it via email
   const sendOTP = async (email: string) => {
     try {
       if (!email.endsWith('@kiit.ac.in')) {
         throw new Error('Only KIIT email addresses are allowed');
       }
-      // Send OTP using Supabase's signInWithOtp method
-      const { error } = await supabase.auth.signInWithOtp({ email });
-      if (error) throw error;
+      // Generate a random 6-digit OTP
+      const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      // For demo: Store the OTP locally (in production, store securely on the server)
+      localStorage.setItem('customOTP', otpCode);
+      // TODO: Replace this with an API call to send the OTP via email
+      console.log(`Sending OTP ${otpCode} to ${email}`);
       toast.success('OTP sent to your email!');
       return true;
     } catch (error: any) {
@@ -111,17 +115,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Updated verifyOTP: check the 6-digit OTP from localStorage
   const verifyOTP = async (email: string, otp: string) => {
     try {
-      // Verify OTP using Supabase's verifyOtp method
-      const { error } = await supabase.auth.verifyOtp({
-        email,
-        token: otp,
-        type: 'email',
-      });
-      if (error) throw error;
-      toast.success('OTP verified successfully!');
-      return true;
+      const storedOTP = localStorage.getItem('customOTP');
+      if (otp === storedOTP) {
+        localStorage.removeItem('customOTP');
+        toast.success('OTP verified successfully!');
+        return true;
+      }
+      toast.error('Invalid OTP');
+      return false;
     } catch (error: any) {
       toast.error(error.message);
       return false;
@@ -152,3 +156,4 @@ export function useAuth() {
   }
   return context;
 }
+
