@@ -7,7 +7,7 @@ const societies = [
     name: 'KIIT Robotics Society',
     description: 'A platform for robotics enthusiasts to learn and build innovative projects.',
     image: 'src/assets/IMG-20250318-WA0029.png',
-    url: 'https://ksac.kiit.ac.in/societies/kiit-robotics-society/', // update manually later
+    url: 'https://ksac.kiit.ac.in/societies/kiit-robotics-society/',
   },
   {
     name: 'Korus',
@@ -39,45 +39,42 @@ const societies = [
     image:'src/assets/IMG-20250318-WA0026.png',
     url:'https://ksac.kiit.ac.in/societies/khwahishein/',
   },
-{
-   name: 'Kreative Eye',
-   description: 'Kreative Eye, the official society of KIIT works on these fields. They capture the beautiful moments in our life in KIIT and make them memorable for our entire life. ',
-   image: 'src/assets/IMG-20250318-WA0025.png',
-   url: 'https://ksac.kiit.ac.in/societies/kreative-eye/',
-},
-{
-   name: 'KIIT Wordsmith Writing Society',
-   description: 'No matter what, a pen is still mightier than a sword and KIIT Wordsmith, the official “Writing Society” helps the writers of KIIT to become experts to express what they feel. ',
-   image: 'src/assets/IMG-20250318-WA0024.png',
-   url: 'https://ksac.kiit.ac.in/societies/kiit-wordsmith/',
-},
-{
-   name: 'Kalakaar',
-   description: 'Kalakaar is the official “Dramatic Society” of KIIT. Kalakaar works with Theater and Nukkad in KIIT',
-   image: 'src/assets/IMG-20250318-WA0023.png',
-   url: 'https://ksac.kiit.ac.in/societies/kalakaar/',
-},
-{
-   name: 'KIIT AEWS',
-   description: 'The official KIIT Animal & Environment Welfare Society works hard to keep our environment safe for us as well as for the animals. ',
-   image: 'src/assets/IMG-20250318-WA0022.png',
-   url: 'https://ksac.kiit.ac.in/societies/kiit-animal-environment-welfare-society/',
-},
-{
-   name: 'Khwaab',
-   description: 'Khwaab is the official “Social Service Society” of KIIT. The philosophies of “Art of Giving”, “Kompassion” and “India against Negativity” of our Honorable Founder Dr. Achyutya Samanta Sir are the main inspiration of this society.',
-   image: 'src/assets/IMG-20250318-WA0021.png',
-   url: 'https://ksac.kiit.ac.in/societies/khwaab/',
-},
-{
-   name: 'ENACTUS KISS-KIIT ',
-   description: 'ENACTUS KISS-KIIT ',
-   image: 'src/assets/IMG-20250318-WA0020.png',
-   url: 'https://ksac.kiit.ac.in/societies/enactus/',
-},
-
-
-
+  {
+    name: 'Kreative Eye',
+    description: 'Kreative Eye, the official society of KIIT works on these fields. They capture the beautiful moments in our life in KIIT and make them memorable for our entire life.',
+    image: 'src/assets/IMG-20250318-WA0025.png',
+    url: 'https://ksac.kiit.ac.in/societies/kreative-eye/',
+  },
+  {
+    name: 'KIIT Wordsmith Writing Society',
+    description: 'No matter what, a pen is still mightier than a sword and KIIT Wordsmith, the official “Writing Society” helps the writers of KIIT to become experts to express what they feel.',
+    image: 'src/assets/IMG-20250318-WA0024.png',
+    url: 'https://ksac.kiit.ac.in/societies/kiit-wordsmith/',
+  },
+  {
+    name: 'Kalakaar',
+    description: 'Kalakaar is the official “Dramatic Society” of KIIT. Kalakaar works with Theater and Nukkad in KIIT',
+    image: 'src/assets/IMG-20250318-WA0023.png',
+    url: 'https://ksac.kiit.ac.in/societies/kalakaar/',
+  },
+  {
+    name: 'KIIT AEWS',
+    description: 'The official KIIT Animal & Environment Welfare Society works hard to keep our environment safe for us as well as for the animals.',
+    image: 'src/assets/IMG-20250318-WA0022.png',
+    url: 'https://ksac.kiit.ac.in/societies/kiit-animal-environment-welfare-society/',
+  },
+  {
+    name: 'Khwaab',
+    description: 'Khwaab is the official “Social Service Society” of KIIT. The philosophies of “Art of Giving”, “Kompassion” and “India against Negativity” of our Honorable Founder Dr. Achyutya Samanta Sir are the main inspiration of this society.',
+    image: 'src/assets/IMG-20250318-WA0021.png',
+    url: 'https://ksac.kiit.ac.in/societies/khwaab/',
+  },
+  {
+    name: 'ENACTUS KISS-KIIT',
+    description: 'ENACTUS KISS-KIIT',
+    image: 'src/assets/IMG-20250318-WA0020.png',
+    url: 'https://ksac.kiit.ac.in/societies/enactus/',
+  },
 ];
 
 function StudentClubs() {
@@ -96,7 +93,7 @@ function StudentClubs() {
       </nav>
 
       <main className="container mx-auto px-4 py-8">
-        <h1 className="text-4xl font-bold mb-8 text-[#17d059]"> Student Clubs</h1>
+        <h1 className="text-4xl font-bold mb-8 text-[#17d059]">Student Clubs</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {societies.map((society, index) => (
@@ -104,11 +101,14 @@ function StudentClubs() {
               key={index}
               className="bg-[#1a1a1a] rounded-lg overflow-hidden shadow-lg"
             >
-              {/* Card Header with background image */}
-              <div
-                className="w-full h-48 bg-cover bg-center"
-                style={{ backgroundImage: `url(${society.image})` }}
-              />
+              {/* Using an image tag to better control object-fit */}
+              <div className="w-full h-48 overflow-hidden">
+                <img
+                  src={society.image}
+                  alt={society.name}
+                  className="w-full h-full object-contain"
+                />
+              </div>
               <div className="p-6">
                 <h3 className="text-xl font-bold mb-2 text-[#17d059]">
                   {society.name}
