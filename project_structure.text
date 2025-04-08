@@ -3,23 +3,56 @@
   - prompt
 - .env
 - .gitignore
+- backend
+  - .env
+  - package-lock.json
+  - package.json
+  - server.ts
+  - test-email.ts
+  - tsconfig.json
 - eslint.config.js
 - index.html
 - package-lock.json
 - package.json
 - postcss.config.js
+- project_structure.text
 - src
   - App.tsx
+  - assets
+    - 136471897_e66931a1-8e60-4995-b35b-0208e75d8194.png
+    - 168283882_10617242-removebg-preview.png
+    - 168283882_10617242.png
+    - 28569625_7456443.png
+    - IMG-20250318-WA0016.png
+    - IMG-20250318-WA0017.png
+    - IMG-20250318-WA0018.png
+    - IMG-20250318-WA0019.png
+    - IMG-20250318-WA0020.png
+    - IMG-20250318-WA0021.png
+    - IMG-20250318-WA0022.png
+    - IMG-20250318-WA0023.png
+    - IMG-20250318-WA0024.png
+    - IMG-20250318-WA0025.png
+    - IMG-20250318-WA0026.png
+    - IMG-20250318-WA0027.png
+    - IMG-20250318-WA0028.png
+    - IMG-20250318-WA0029.png
+    - IMG-20250318-WA0030.png
+    - KIIT-Logo-Icon-1.png
+    - KIIT-Logo-Icon-1.svg
+    - —Pngtree—back view of students in_5421805.png
   - components
-    - AppoitmentForm.tsx
+    - AppointmentForm.tsx
     - AuthModal.tsx
-    - Chatbot.tsx
+    - CustomChatbot.tsx
     - Navigation.tsx
+    - OTPVerification.tsx
     - UtilitiesGrid.tsx
   - contexts
     - AuthContext.tsx
   - index.css
   - lib
+    - emailService.ts
     - supabase.ts
   - main.tsx
   - pages
@@ -34,6 +67,7 @@
   - migrations
     - 20250317164740_rapid_lodge.sql
     - 20250317165634_little_hall.sql
+    - 20250408000000_add_otp_fields.sql
 - tailwind.config.js
 - tsconfig.app.json
 - tsconfig.json

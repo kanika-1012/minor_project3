@@ -1,8 +1,13 @@
-import React, { useState, useEffect } from 'react';
+// src/pages/GrievanceRedressal.tsx
+
+import React, { useEffect, useState } from 'react';
+import { Menu, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+
+const BACKEND_URL = 'http://localhost:5000'; // make sure this is running
+const API_KEY = 'your_secret_api_key'; // must match backend .env
 
 function GrievanceRedressal() {
   const { user } = useAuth();
@@ -13,7 +18,43 @@ function GrievanceRedressal() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Function to fetch grievances for the current user
+  // Send notification to topic admin via backend endpoint
+  const notifyTopicAdmin = async (grievance: any) => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/notify-topic-admin`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-api-key': API_KEY,
+        },
+        body: JSON.stringify({ grievance }),
+      });
+      const data = await res.json();
+      console.log('Topic admin notification response:', data);
+    } catch (err) {
+      console.error('Error notifying topic admin:', err);
+    }
+  };
+
+  // (Optional) Notify main admin function remains unchanged if used elsewhere.
+  const notifyMainAdmin = async (grievance: any) => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/notify-main-admin`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-api-key': API_KEY,
+        },
+        body: JSON.stringify({ grievance }),
+      });
+      const data = await res.json();
+      console.log('Main admin notification response:', data);
+    } catch (err) {
+      console.error('Error notifying main admin:', err);
+    }
+  };
+
+  // Fetch grievances for the current user from Supabase
   const fetchGrievances = async () => {
     if (!user) return;
     const { data, error } = await supabase
@@ -28,11 +69,32 @@ function GrievanceRedressal() {
     }
   };
 
+  // Check for escalations (if required) – not modified here.
+  const checkAndEscalateGrievances = async () => {
+    if (!user) return;
+    const now = new Date();
+    for (const grievance of grievances) {
+      const createdAt = new Date(grievance.created_at);
+      const diffDays = (now.getTime() - createdAt.getTime()) / (1000 * 3600 * 24);
+      if (diffDays >= 15 && grievance.status !== 'Resolved' && grievance.status !== 'Escalated') {
+        const { error } = await supabase
+          .from('grievances')
+          .update({ status: 'Escalated' })
+          .eq('id', grievance.id);
+        if (error) {
+          console.error('Error escalating grievance:', error);
+        } else {
+          // Notify main admin for escalation
+          notifyMainAdmin(grievance);
+        }
+      }
+    }
+  };
+
   useEffect(() => {
     if (user) {
       fetchGrievances();
-
-      // Setup realtime subscription using supabase.channel()
+      // Setup a realtime subscription using Supabase channel API
       const channel = supabase
         .channel(`grievances_${user.id}`)
         .on(
@@ -55,6 +117,12 @@ function GrievanceRedressal() {
       };
     }
   }, [user]);
+
+  useEffect(() => {
+    if (grievances.length > 0) {
+      checkAndEscalateGrievances();
+    }
+  }, [grievances]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,11 +147,19 @@ function GrievanceRedressal() {
       setError('Failed to submit grievance. Please try again.');
       console.error('Insert grievance error:', error);
     } else {
-      // Clear form fields
+      // Notify topic admin upon submission (for all categories)
+      await notifyTopicAdmin({
+        user_id: user.id,
+        category,
+        subject,
+        description,
+        created_at: new Date().toISOString(),
+      });
+      // Refresh grievances list and clear form
+      fetchGrievances();
       setCategory('Academic');
       setSubject('');
       setDescription('');
-      fetchGrievances();
     }
     setLoading(false);
   };
@@ -118,6 +194,7 @@ function GrievanceRedressal() {
                 <option>Academic</option>
                 <option>Administrative</option>
                 <option>Hostel</option>
+                <option>Sexual Harassment</option>
                 <option>Other</option>
               </select>
             </div>
@@ -154,7 +231,7 @@ function GrievanceRedressal() {
             </button>
           </form>
 
-          {/* Grievance Tracking */}
+          {/* Grievance Tracking Section */}
           <div className="mt-8 bg-[#1a1a1a] p-6 rounded-lg">
             <h2 className="text-xl font-bold mb-4 text-[#17d059]">Track Your Grievances</h2>
             <div className="space-y-4">
@@ -167,7 +244,7 @@ function GrievanceRedressal() {
                       <div>
                         <h3 className="font-semibold">Grievance #{grievance.id}</h3>
                         <p className="text-sm text-gray-400">
-                          Submitted on {new Date(grievance.created_at).toLocaleDateString()}
+                          Submitted on {new Date(grievance.created_at).toLocaleString()}
                         </p>
                         <p className="text-sm text-gray-400">{grievance.subject}</p>
                       </div>
@@ -175,6 +252,8 @@ function GrievanceRedressal() {
                         className={`px-3 py-1 rounded ${
                           grievance.status === 'In Progress'
                             ? 'bg-yellow-800 text-yellow-200'
+                            : grievance.status === 'Escalated'
+                            ? 'bg-red-800 text-red-200'
                             : 'bg-green-800 text-green-200'
                         }`}
                       >
@@ -193,4 +272,6 @@ function GrievanceRedressal() {
 }
 
 export default GrievanceRedressal;
+
+
 
