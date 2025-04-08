@@ -203,7 +203,14 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
 
         <button
           type="button"
-          onClick={() => setIsSignUp(!isSignUp)}
+          onClick={() => {
+            setIsSignUp(!isSignUp);
+            // Reset OTP related state when toggling modes.
+            setOtp('');
+            setOtpSent(false);
+            setOtpVerified(false);
+            setUserData({ fullName: '', yearOfStudy: '', stream: '', branch: '' });
+          }}
           className="mt-4 text-sm text-blue-600 hover:underline"
         >
           {isSignUp
