@@ -1,13 +1,13 @@
 // src/pages/GrievanceRedressal.tsx
 
 import React, { useEffect, useState } from 'react';
-import { Menu, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../contexts/AuthContext';
+import { notifyTopicAdmin, notifyMainAdmin } from '../lib/emailService';
 
-const BACKEND_URL = 'http://localhost:5000'; // make sure this is running
-const API_KEY = 'your_secret_api_key'; // must match backend .env
+const BACKEND_URL = 'http://localhost:5000';
 
 function GrievanceRedressal() {
   const { user } = useAuth();
@@ -17,42 +17,6 @@ function GrievanceRedressal() {
   const [grievances, setGrievances] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-
-  // Send notification to topic admin via backend endpoint
-  const notifyTopicAdmin = async (grievance: any) => {
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/notify-topic-admin`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'x-api-key': API_KEY,
-        },
-        body: JSON.stringify({ grievance }),
-      });
-      const data = await res.json();
-      console.log('Topic admin notification response:', data);
-    } catch (err) {
-      console.error('Error notifying topic admin:', err);
-    }
-  };
-
-  // (Optional) Notify main admin function remains unchanged if used elsewhere.
-  const notifyMainAdmin = async (grievance: any) => {
-    try {
-      const res = await fetch(`${BACKEND_URL}/api/notify-main-admin`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'x-api-key': API_KEY,
-        },
-        body: JSON.stringify({ grievance }),
-      });
-      const data = await res.json();
-      console.log('Main admin notification response:', data);
-    } catch (err) {
-      console.error('Error notifying main admin:', err);
-    }
-  };
 
   // Fetch grievances for the current user from Supabase
   const fetchGrievances = async () => {
@@ -69,7 +33,7 @@ function GrievanceRedressal() {
     }
   };
 
-  // Check for escalations (if required) – not modified here.
+  // Check for escalations after fetching updated grievances
   const checkAndEscalateGrievances = async () => {
     if (!user) return;
     const now = new Date();
@@ -84,8 +48,8 @@ function GrievanceRedressal() {
         if (error) {
           console.error('Error escalating grievance:', error);
         } else {
-          // Notify main admin for escalation
-          notifyMainAdmin(grievance);
+          // Notify main admin for escalated grievance
+          await notifyMainAdmin(grievance);
         }
       }
     }
@@ -132,6 +96,7 @@ function GrievanceRedressal() {
     }
     setLoading(true);
     setError('');
+    // Insert the grievance record in Supabase
     const { error } = await supabase
       .from('grievances')
       .insert([
@@ -147,7 +112,7 @@ function GrievanceRedressal() {
       setError('Failed to submit grievance. Please try again.');
       console.error('Insert grievance error:', error);
     } else {
-      // Notify topic admin upon submission (for all categories)
+      // After successful insertion, notify the Topic Admin
       await notifyTopicAdmin({
         user_id: user.id,
         category,
@@ -155,7 +120,7 @@ function GrievanceRedressal() {
         description,
         created_at: new Date().toISOString(),
       });
-      // Refresh grievances list and clear form
+      // Refresh the grievance list and clear the form fields
       fetchGrievances();
       setCategory('Academic');
       setSubject('');
@@ -272,6 +237,5 @@ function GrievanceRedressal() {
 }
 
 export default GrievanceRedressal;
-
 
 

@@ -1,3 +1,5 @@
+// backend/server.ts
+
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import nodemailer from 'nodemailer';
@@ -32,7 +34,7 @@ const otpStore: { [email: string]: OTPEntry } = {};
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST, // e.g. smtp.gmail.com
   port: Number(process.env.EMAIL_PORT) || 587,
-  secure: process.env.EMAIL_SECURE === 'true', // false for 587
+  secure: process.env.EMAIL_SECURE === 'true', // false for port 587
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
@@ -119,7 +121,7 @@ app.post('/api/notify-topic-admin', apiKeyMiddleware, async (req: Request, res: 
     from: process.env.EMAIL_FROM,
     to: process.env.TOPIC_ADMIN_EMAIL,
     subject: `New Grievance: ${grievance.subject}`,
-    text: `New grievance submitted:\n\nCategory: ${grievance.category}\nSubject: ${grievance.subject}\nDescription: ${grievance.description}\nSubmitted by: ${grievance.user_id}`,
+    text: `New grievance submitted:\n\nCategory: ${grievance.category}\nSubject: ${grievance.subject}\nDescription: ${grievance.description}\nSubmitted by: ${grievance.user_id}\nSubmitted on: ${grievance.created_at}`,
   };
 
   try {
@@ -143,7 +145,7 @@ app.post('/api/notify-main-admin', apiKeyMiddleware, async (req: Request, res: R
     from: process.env.EMAIL_FROM,
     to: process.env.MAIN_ADMIN_EMAIL,
     subject: `Escalated Grievance: ${grievance.subject}`,
-    text: `Grievance #${grievance.id} has been escalated.\n\nCategory: ${grievance.category}\nSubject: ${grievance.subject}\nDescription: ${grievance.description}\nSubmitted on: ${grievance.created_at}`,
+    text: `Grievance #${grievance.id || 'N/A'} has been escalated.\n\nCategory: ${grievance.category}\nSubject: ${grievance.subject}\nDescription: ${grievance.description}\nSubmitted on: ${grievance.created_at}`,
   };
 
   try {

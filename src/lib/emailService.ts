@@ -23,7 +23,6 @@ export const notifyTopicAdmin = async (grievance: any) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      // Use import.meta.env for Vite environment variables
       'x-api-key': import.meta.env.VITE_API_KEY,
     },
     body: JSON.stringify({ grievance }),
